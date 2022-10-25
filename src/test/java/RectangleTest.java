@@ -5,6 +5,7 @@ import org.example.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,12 +17,6 @@ public class RectangleTest {
     //TODO equals test for all
     //TODO null test for all
 
-//    @Test()
-//    public void testConstructInvalidRectangle() {
-//        IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () ->
-//                new Rectangle(new Point(1, 4), new Point(4, 4), new Point(1, 5), new Point(1, 1)));
-//        assertEquals("Points did not form a valid rectangle", thrown.getMessage());
-//    }
     @Test()
     public void testConstructInvalidRectangle() {
         IllegalArgumentException thrown1 = Assertions.assertThrows(IllegalArgumentException.class, () ->
@@ -32,18 +27,6 @@ public class RectangleTest {
         assertTrue(thrown2.getMessage().startsWith("Points cannot form a valid rectangle"));
     }
 
-//    @Test
-//    public void testGetAdjacencyProper() {
-//        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 4), new Point(4, 1), new Point(1, 1));
-//        Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 6), new Point(6, 1), new Point(4, 1));
-//        Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
-//        assertTrue(result1.isPresent());
-//        assertEquals(AdjacencyType.PROPER, result1.get().getType());
-//        //testing symmetric call
-//        Optional<Adjacency> result2 = rec2.getAdjacency(rec1);
-//        assertTrue(result2.isPresent());
-//        assertEquals(AdjacencyType.PROPER, result2.get().getType());
-//    }
     @Test
     public void testHasAdjacencyLeftRightProper() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
@@ -61,7 +44,6 @@ public class RectangleTest {
         //testing symmetric call
         assertFalse(rec2.hasAdjacency(rec1));
     }
-
 
     @Test
     public void testHasAdjacencyLeftRightSubLine1() {
@@ -82,6 +64,7 @@ public class RectangleTest {
         //testing symmetric call
         assertTrue(rec2.hasAdjacency(rec1));
     }
+
     @Test
     public void testHasAdjacencyLeftRightSubLine3() {
         //bottom sides same
@@ -193,8 +176,8 @@ public class RectangleTest {
 
     @Test
     public void testIntersection() {
-        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 4), new Point(6, 2), new Point(2, 2));
-        Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 3), new Point(5, 1), new Point(3, 1));
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 1));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertFalse(inter.isEmpty());
         assertEquals(2, inter.size());
@@ -211,9 +194,70 @@ public class RectangleTest {
     }
 
     @Test
-    public void testNoIntersection() {
-        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 4), new Point(6, 2), new Point(2, 2));
-        Rectangle rec2 = new Rectangle(new Point(3, 1), new Point(5, 1), new Point(5, 0), new Point(3, 0));
+    public void testIntersectionFourWay(){
+        Rectangle rec1 = new Rectangle(new Point(1,6), new Point(3,0));
+        Rectangle rec2 = new Rectangle(new Point(-4,3), new Point(5, 5));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertFalse(inter.isEmpty());
+        assertEquals(4, inter.size());
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertFalse(inter.isEmpty());
+        assertEquals(4, inter.size());
+        List<Point> points = List.of(new Point(1,3),new Point(3,3),new Point(3,5),new Point(1,5));
+        for (Point point : points) {
+            assertTrue(inter.contains(point));
+            assertTrue(symInter.contains(point));
+        }
+    }
+
+    @Test
+    public void testIntersectionCorner1(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionCorner2(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionCorner3(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionCorner4(){
+        assertTrue(false);
+    }
+
+    @Test
+    public void testIntersectionSide1(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionSide2(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionSide3(){
+        assertTrue(false);
+    }
+    @Test
+    public void testIntersectionSide4(){
+        assertTrue(false);
+    }
+//TODO verify need
+//    @Test
+//    public void testIntersectionHorizontal(){
+//        assertTrue(false);
+//    }
+//
+//    @Test
+//    public void testIntersectionVertical(){
+//        assertTrue(false);
+//    }
+    @Test
+    public void testIntersectionNone() {
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(3, 1), new Point(5, 0));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertTrue(inter.isEmpty());
         //testing symmetric call
@@ -222,22 +266,17 @@ public class RectangleTest {
     }
 
     @Test
-    public void testEndpointIntersection() {
-        Rectangle rec1 = new Rectangle(new Point(1, 3), new Point(5, 6), new Point(6, 4), new Point(3, 1));
-        Rectangle rec2 = new Rectangle(new Point(6, 6), new Point(9, 6), new Point(9, 2), new Point(6, 2));
+    public void testIntersectionEndpoint() {
+        Rectangle rec1 = new Rectangle(new Point(1, 3), new Point(6, 4));
+        Rectangle rec2 = new Rectangle(new Point(6, 6), new Point(9, 2));
         Set<Point> inter = rec1.getIntersection(rec2);
-        assertFalse(inter.isEmpty());
-        assertEquals(1, inter.size());
-        Point point1 = new Point(6, 4);
-        assertTrue(inter.contains(point1));
+        assertTrue(inter.isEmpty());
         //testing symmetric call
         Set<Point> symInter = rec2.getIntersection(rec1);
-        assertFalse(symInter.isEmpty());
-        assertEquals(1, symInter.size());
-        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.isEmpty());
     }
 
-//    @Test
+    //    @Test
 //    public void testContainment() {
 //        Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(6, 5), new Point(6, 1), new Point(1, 1));
 //        Rectangle rec2 = new Rectangle(new Point(2, 4), new Point(4, 4), new Point(4, 2), new Point(2, 2));
@@ -270,7 +309,7 @@ public class RectangleTest {
         //TODO adjacency
     }
 
-//    @Test
+    //    @Test
 //    public void testNoContainment() {
 //        //no containment - intersection
 //        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 4), new Point(6, 2), new Point(2, 2));
