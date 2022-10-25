@@ -1,13 +1,6 @@
 package org.example;
 
-import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
-import org.apache.commons.numbers.core.Precision;
-
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class Rectangle {
@@ -105,8 +98,8 @@ public class Rectangle {
                 other.bottom >= this.bottom && other.top <= this.top);
     }
 
-    //TODO less comparisons for hasAdj
-    public boolean hasAdjacency(Rectangle other) {
+    //TODO less comparisons for isAdj
+    public boolean isAdjacentTo(Rectangle other) {
         if (other == null) return false;
         if (this.equals(other)) return false;
         if (right == other.left || left == other.right) {

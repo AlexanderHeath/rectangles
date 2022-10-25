@@ -1,12 +1,9 @@
-import org.example.Adjacency;
-import org.example.AdjacencyType;
 import org.example.Point;
 import org.example.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,18 +28,18 @@ public class RectangleTest {
     public void testHasAdjacencyLeftRightProper() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 1));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyLeftRightNone() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(5, 4), new Point(6, 1));
-        assertFalse(rec1.hasAdjacency(rec2));
+        assertFalse(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertFalse(rec2.hasAdjacency(rec1));
+        assertFalse(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -50,9 +47,9 @@ public class RectangleTest {
         //top sides same
         Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(4, 5), new Point(6, 2));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -60,9 +57,9 @@ public class RectangleTest {
         //rec2 top & bottom between rec1
         Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 2));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -70,36 +67,36 @@ public class RectangleTest {
         //bottom sides same
         Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 1));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyLeftRightPartial() {
         Rectangle rec1 = new Rectangle(new Point(3, 5), new Point(1, 2));
         Rectangle rec2 = new Rectangle(new Point(3, 7), new Point(5, 4));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyTopBottomProper() {
         Rectangle rec1 = new Rectangle(new Point(1, 1), new Point(5, 4));
         Rectangle rec2 = new Rectangle(new Point(1, 6), new Point(5, 4));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyTopBottomNone() {
         Rectangle rec1 = new Rectangle(new Point(1, 1), new Point(5, 4));
         Rectangle rec2 = new Rectangle(new Point(1, 6), new Point(5, 3));
-        assertFalse(rec1.hasAdjacency(rec2));
+        assertFalse(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertFalse(rec2.hasAdjacency(rec1));
+        assertFalse(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -107,9 +104,9 @@ public class RectangleTest {
         //right sides same
         Rectangle rec1 = new Rectangle(new Point(1, 1), new Point(5, 4));
         Rectangle rec2 = new Rectangle(new Point(2, 6), new Point(5, 4));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -117,9 +114,9 @@ public class RectangleTest {
         //rec 2 left & right between rec1
         Rectangle rec1 = new Rectangle(new Point(1, 1), new Point(5, 4));
         Rectangle rec2 = new Rectangle(new Point(2, 6), new Point(4, 4));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
@@ -127,27 +124,27 @@ public class RectangleTest {
         //left sides same
         Rectangle rec1 = new Rectangle(new Point(1, 1), new Point(5, 4));
         Rectangle rec2 = new Rectangle(new Point(1, 6), new Point(4, 4));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyTopBottomPartial() {
         Rectangle rec1 = new Rectangle(new Point(1, 3), new Point(4, 5));
         Rectangle rec2 = new Rectangle(new Point(2, 1), new Point(6, 3));
-        assertTrue(rec1.hasAdjacency(rec2));
+        assertTrue(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertTrue(rec2.hasAdjacency(rec1));
+        assertTrue(rec2.isAdjacentTo(rec1));
     }
 
     @Test
     public void testHasAdjacencyEndpoint() {
         Rectangle rec1 = new Rectangle(new Point(-1, 1), new Point(1, 2));
         Rectangle rec2 = new Rectangle(new Point(1, 2), new Point(3, 3));
-        assertFalse(rec1.hasAdjacency(rec2));
+        assertFalse(rec1.isAdjacentTo(rec2));
         //testing symmetric call
-        assertFalse(rec2.hasAdjacency(rec1));
+        assertFalse(rec2.isAdjacentTo(rec1));
     }
 
 //    @Test
@@ -306,6 +303,7 @@ public class RectangleTest {
         assertTrue(rec1.contains(rec2));
         assertFalse(rec2.contains(rec1));
 
+        System.out.println(rec1.isAdjacentTo(rec2));
         //TODO adjacency
     }
 
