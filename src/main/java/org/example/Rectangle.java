@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class Rectangle {
@@ -11,6 +12,11 @@ public class Rectangle {
     private final double bottom;
     private final double width;
     private final double height;
+
+    private final LineSegment leftSeg;
+    private final LineSegment rightSeg;
+    private final LineSegment topSeg;
+    private final LineSegment bottomSeg;
     private final Point[] points;
 
     /**
@@ -30,12 +36,21 @@ public class Rectangle {
         top = Math.max(a.getY(), b.getY());
         width = right - left;
         height = top - bottom;
+        Point topLeft = new Point(left, top);
+        Point bottomLeft = new Point(left, bottom);
+        Point topRight = new Point(right, top);
+        Point bottomRight = new Point(right, bottom);
+
         points = new Point[]{
                 new Point(left, top),
                 new Point(right, top),
                 new Point(right, bottom),
                 new Point(left, bottom)
         };
+        leftSeg = new LineSegment(bottomLeft, topLeft);
+        rightSeg = new LineSegment(bottomRight, topRight);
+        topSeg = new LineSegment(topLeft, topRight);
+        bottomSeg = new LineSegment(bottomLeft, bottomRight);
     }
 
     public Point[] getPoints() {
@@ -60,84 +75,116 @@ public class Rectangle {
      * @param other
      * @return
      */
-    //TODO endpoint intersection?
     public Set<Point> getIntersection(Rectangle other) {
         Set<Point> intersections = new HashSet<>();
         if (other == null || this.equals(other)) return intersections;
 //        if (this.contains(other) || other.contains(this)) return intersections;
-        setIntersections(this, other, intersections);
-        setIntersections(other, this, intersections);
-
-
-
-        //call above again with other
-
+        //check if the verticals of this intersect with the horizontals of other
+        intersections.addAll(getIntersectionPoints(this, other));
+        //check if other's verticals intersect with the horizontals of this
+        intersections.addAll(getIntersectionPoints(other, this));
         return intersections;
     }
 
-    private void setIntersections(Rectangle rec1, Rectangle rec2, Set<Point> intersections) {
-        Point r1TopLeft = rec1.points[0];
-        Point r1BottomLeft = rec1.points[3];
-        Point r1TopRight = rec1.points[1];
-        Point r1BottomRight = rec1.points[2];
-
-        Point r2BottomLeft = rec2.points[3];
-        Point r2BottomRight = rec2.points[2];
-        Point r2TopLeft = rec2.points[0];
-        Point r2TopRight = rec2.points[1];
-        //left intersects with bottom
-        if (hasVerticalHorizontalIntersection(r1TopLeft, r1BottomLeft, r2BottomLeft, r2BottomRight)){
-            //intersection is left x bottom y
-            intersections.add(new Point(r1TopLeft.getX(), r2BottomLeft.getY()));
-        }
-        //left intersects with top
-        if (hasVerticalHorizontalIntersection(r1TopLeft, r1BottomLeft, r2TopLeft, r2TopRight)){
-            //intersection is left x top y
-            intersections.add(new Point(r1TopLeft.getX(), r2TopLeft.getY()));
-        }
-        //right intersects with top
-        if (hasVerticalHorizontalIntersection(r1TopRight, r1BottomRight, r2TopLeft, r2TopRight)){
-            //intersection is right x top y
-            intersections.add(new Point(r1TopRight.getX(), r2TopLeft.getY()));
-        }
-        //right intersects with bottom
-        if (hasVerticalHorizontalIntersection(r1TopRight, r1BottomRight, r2BottomLeft, r2BottomRight)){
-            //intersection is right x bottom y
-            intersections.add(new Point(r1TopRight.getX(), r2BottomLeft.getY()));
-        }
+    /**
+     * Returns the intersection points of the vertical segments of rec1 and the horizontal segments of rec2
+     * @param rec1
+     * @param rec2
+     * @return
+     */
+    private Set<Point> getIntersectionPoints(Rectangle rec1, Rectangle rec2) {
+        Set<Point> intersections = new HashSet<>();
+        getIntersectionPoint(rec1.leftSeg, rec2.bottomSeg).ifPresent(intersections::add);
+        getIntersectionPoint(rec1.leftSeg, rec2.topSeg).ifPresent(intersections::add);
+        getIntersectionPoint(rec1.rightSeg, rec2.bottomSeg).ifPresent(intersections::add);
+        getIntersectionPoint(rec1.rightSeg, rec2.topSeg).ifPresent(intersections::add);
+        return intersections;
     }
-    //does left intersect with other bottom?
-    //is left x between other x's and other bottom y between  left ys?
-    //yes? intersection is left x other bottom y
-    //does left intersect with other top?
-    //is left x between other top x's & other top y between left y's?
-    //yes? intersection is left x other top y
-    //does right intersect with other top?
-    //is right x between other top x's & other top y between right y's?
-    //yes? intersection is right x other top y
-    //does right intersect with other bottom?
-    //right x between bottom x's && bottom y between right y's
-    //yes? intersection is right x bot y
 
-    private boolean hasVerticalHorizontalIntersection(Point vertP1, Point vertP2, Point horizP1, Point horizP2) {
+    private Optional<Point> getIntersectionPoint(LineSegment vertical, LineSegment horizontal) {
+        if (hasIntersection(vertical, horizontal)) {
+            return Optional.of(new Point(vertical.getPoint1().getX(), horizontal.getPoint1().getY()));
+        }
+        return Optional.empty();
+    }
+
+    private boolean hasIntersection(LineSegment vertical, LineSegment horizontal) {
         //If vertical x is between the horizontal x's and the horizontal y is between the vertical x's,
         // there is an intersection
-        return (isBetween(horizP1.getX(), horizP2.getX(), vertP1.getX()) &&
-                isBetween(vertP1.getY(), vertP2.getY(), horizP1.getY()));
+        return (isBetween(horizontal.getPoint1().getX(), horizontal.getPoint2().getX(), vertical.getPoint1().getX()) &&
+                isBetween(vertical.getPoint1().getY(), vertical.getPoint2().getY(), horizontal.getPoint1().getY()));
     }
 
     //not symmetric
+//    public boolean contains(Rectangle other) {
+//        if (other == null || this.equals(other)) return false;
+//        return (other.left >= this.left && other.right <= this.right &&
+//                other.bottom >= this.bottom && other.top <= this.top);
+//    }
     public boolean contains(Rectangle other) {
         if (other == null || this.equals(other)) return false;
-        return (other.left >= this.left && other.right <= this.right &&
-                other.bottom >= this.bottom && other.top <= this.top);
+        return (other.leftSeg.getPoint1().getX() >= this.leftSeg.getPoint1().getX() &&
+                other.rightSeg.getPoint1().getX() <= this.rightSeg.getPoint1().getX() &&
+                other.bottomSeg.getPoint1().getY() >= this.bottomSeg.getPoint1().getY() &&
+                other.topSeg.getPoint1().getY() <= this.topSeg.getPoint1().getY());
     }
-
     //TODO less comparisons for isAdj
+//    public boolean isAdjacentTo(Rectangle other) {
+//        if (other == null) return false;
+//        if (this.equals(other)) return false;
+//        if (right == other.left || left == other.right) {
+//            return (isProper(top, bottom, other.top, other.bottom) ||
+//                    isSubLine(top, bottom, other.top, other.bottom) ||
+//                    isPartial(top, bottom, other.top, other.bottom));
+//        }
+//        if (top == other.bottom || bottom == other.top) {
+//            return (isProper(left, right, other.left, other.right) ||
+//                    isSubLine(left, right, other.left, other.right) ||
+//                    isPartial(left, right, other.left, other.right));
+//        }
+//        return false;
+//    }
+
     public boolean isAdjacentTo(Rectangle other) {
         if (other == null) return false;
         if (this.equals(other)) return false;
-        if (right == other.left || left == other.right) {
+
+        //we share a left or right side
+        //either top & bottom y's are same
+        //or either other's top y is between this top & bottom y or other's bottom y is between this top & bottom y
+        //or top y is between other's top & bottom y ||
+
+        //right or left on same vertical line
+        if (shareVertical(this, other)) {
+            if (shareHorizontal(this, other)) return true; //(proper)
+
+            if (topSeg.getPoint1().getY() == other.topSeg.getPoint1().getY() &&
+                    bottomSeg.getPoint1().getY() == other.bottomSeg.getPoint1().getY())
+                return true;
+
+
+
+            if (isProper(bottomSeg.getPoint1().getY(), topSeg.getPoint1().getY(),
+                    other.bottomSeg.getPoint1().getY(), other.topSeg.getPoint1().getY())) {
+                return true;
+            }
+
+        }
+        //left on same vertical line
+        if (leftSeg.getPoint1().getX() == other.rightSeg.getPoint1().getX()) {
+            if (leftSeg == rightSeg) return true;
+            if (isBetween(leftSeg.getPoint1().getY(), leftSeg.getPoint1().getY(), other.topSeg.getPoint1().getY()) ||
+                    isBetween(leftSeg.getPoint1().getY(), leftSeg.getPoint1().getY(), other.bottomSeg.getPoint1().getY())
+            //check if same (proper)
+            //if not
+            //check if either top or bottom y within left y (partial, but will work for sub-line)
+        }
+
+        if (rightSeg.getPoint1().getX() == other.leftSeg.getPoint1().getX() ||
+                leftSeg.getPoint1().getX() == other.rightSeg.getPoint1().getX()) {
+            //on same vertical line
+            //now need to check if there is any horizontal cross over
+            return
             return (isProper(top, bottom, other.top, other.bottom) ||
                     isSubLine(top, bottom, other.top, other.bottom) ||
                     isPartial(top, bottom, other.top, other.bottom));
@@ -148,6 +195,16 @@ public class Rectangle {
                     isPartial(left, right, other.left, other.right));
         }
         return false;
+    }
+
+    private boolean shareVertical(Rectangle rec1, Rectangle rec2) {
+        return rec1.rightSeg.getPoint1().getX() == rec2.leftSeg.getPoint1().getX() ||
+                rec1.leftSeg.getPoint1().getX() == rec2.rightSeg.getPoint1().getX();
+    }
+
+    private boolean shareHorizontal(Rectangle rec1, Rectangle rec2) {
+        return rec1.topSeg.getPoint1().getX() == rec2.bottomSeg.getPoint1().getX() ||
+                rec1.bottomSeg.getPoint1().getX() == rec2.topSeg.getPoint1().getX();
     }
 
     private boolean isProper(double side1, double side2, double otherSide1, double otherSide2) {
