@@ -25,6 +25,40 @@ public class RectangleTest {
     }
 
     @Test
+    public void testGetPoints() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
+        Point[] expected = {new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1)};
+        Point[] points = rec1.getPoints();
+        for (int i = 0; i < 4; i++){
+            assertEquals(points[i], expected[i]);
+        }
+    }
+
+    @Test
+    public void testGetWidth() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(6, 1));
+        assertEquals(5, rec1.getWidth());
+    }
+
+    @Test
+    public void testGetHeight() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(6, 1));
+        assertEquals(3, rec1.getHeight());
+    }
+
+    @Test
+    public void testImmutable() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
+        Point[] expected = {new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1)};
+        Point[] points = rec1.getPoints();
+        points[0] = new Point(1,2);
+        points = rec1.getPoints();
+        for (int i = 0; i < 4; i++){
+            assertEquals(points[i], expected[i]);
+        }
+    }
+
+    @Test
     public void testHasAdjacencyLeftRightProper() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
         Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 1));

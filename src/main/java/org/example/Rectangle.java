@@ -10,10 +10,13 @@ public class Rectangle {
     private final double right;
     private final double top;
     private final double bottom;
+    private final double width;
+    private final double height;
+    private final Point[] points;
 
     /**
-     *
      * TODO a – first corner point in the rectangle (opposite of b) b – second corner point in the rectangle (opposite of a)
+     *
      * @param a
      * @param b
      */
@@ -26,11 +29,26 @@ public class Rectangle {
         //horizontal bounds
         bottom = Math.min(a.getY(), b.getY());
         top = Math.max(a.getY(), b.getY());
-//        double width = right - left;
-//        double height = bottom - top;
-        //create points
-        //set segments
+        width = right - left;
+        height = top - bottom;
+        points = new Point[]{
+                new Point(left, top),
+                new Point(right, top),
+                new Point(right, bottom),
+                new Point(left, bottom)
+        };
+    }
 
+    public Point[] getPoints() {
+        return points.clone();
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
     }
 
     /**
@@ -133,6 +151,7 @@ public class Rectangle {
 
     /**
      * Checks if c is in between a and b, exclusively
+     *
      * @param a
      * @param b
      * @param c
@@ -175,4 +194,10 @@ public class Rectangle {
 //    }
 
 //TODO EQUALS
+
+
+    @Override
+    public String toString() {
+        return "Rectangle{}";
+    }
 }
