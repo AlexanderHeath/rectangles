@@ -5,7 +5,6 @@ import java.util.Set;
 
 public class Rectangle {
 
-
     private final double left;
     private final double right;
     private final double top;
@@ -63,50 +62,68 @@ public class Rectangle {
      */
     //TODO endpoint intersection?
     public Set<Point> getIntersection(Rectangle other) {
-        Set<Point> points = new HashSet<>();
-        if (other == null || this.equals(other)) return points;
-        /**
-         * check if has intersection by seeing if there is a segment inside but not contained
-         * x has to be within x's
-         * one y has to be within others & one y outside
-         *
-         * horizontal & vertical lines will intersect.. (same lines will only overlap)
-         *
-         * x's of a segment between the b
-         * y's of b between a
-         * or reverse we have
-         *
-         *
-         * if vertical and horizontal intersect it will be at (vertical, horizontal)
-         * ex. left & top intersect. intersection point will be (left, top)
-         *
-         */
-        if (this.contains(other) || other.contains(this)) return points;
-        if (isBetween(left, right, other.left)) {
-            if (isBetween(top, bottom, other.top)) points.add(new Point(other.left, bottom));
-            if (isBetween(top, bottom, other.bottom)) points.add(new Point(other.left, top));
-            if (isBetween(other.top, other.bottom, top)) points.add(new Point(other.left, top));
-            if (isBetween(other.top, other.bottom, bottom)) points.add(new Point(other.left, bottom));
+        Set<Point> intersections = new HashSet<>();
+        if (other == null || this.equals(other)) return intersections;
+//        if (this.contains(other) || other.contains(this)) return intersections;
+        setIntersections(this, other, intersections);
+        setIntersections(other, this, intersections);
+
+
+
+        //call above again with other
+
+        return intersections;
+    }
+
+    private void setIntersections(Rectangle rec1, Rectangle rec2, Set<Point> intersections) {
+        Point r1TopLeft = rec1.points[0];
+        Point r1BottomLeft = rec1.points[3];
+        Point r1TopRight = rec1.points[1];
+        Point r1BottomRight = rec1.points[2];
+
+        Point r2BottomLeft = rec2.points[3];
+        Point r2BottomRight = rec2.points[2];
+        Point r2TopLeft = rec2.points[0];
+        Point r2TopRight = rec2.points[1];
+        //left intersects with bottom
+        if (hasVerticalHorizontalIntersection(r1TopLeft, r1BottomLeft, r2BottomLeft, r2BottomRight)){
+            //intersection is left x bottom y
+            intersections.add(new Point(r1TopLeft.getX(), r2BottomLeft.getY()));
         }
-        if (isBetween(left, right, other.right)) {
-            if (isBetween(top, bottom, other.top)) points.add(new Point(other.right, bottom));
-            if (isBetween(top, bottom, other.bottom)) points.add(new Point(other.right, top));
-            if (isBetween(other.top, other.bottom, top)) points.add(new Point(other.right, top));
-            if (isBetween(other.top, other.bottom, bottom)) points.add(new Point(other.right, bottom));
+        //left intersects with top
+        if (hasVerticalHorizontalIntersection(r1TopLeft, r1BottomLeft, r2TopLeft, r2TopRight)){
+            //intersection is left x top y
+            intersections.add(new Point(r1TopLeft.getX(), r2TopLeft.getY()));
         }
-        if (isBetween(other.left, other.right, left)) {
-            if (isBetween(other.top, other.bottom, top)) points.add(new Point(left, other.bottom));
-            if (isBetween(other.top, other.bottom, bottom)) points.add(new Point(left, other.top));
-            if (isBetween(top, bottom, other.top)) points.add(new Point(left, other.top));
-            if (isBetween(top, bottom, other.bottom)) points.add(new Point(left, other.bottom));
+        //right intersects with top
+        if (hasVerticalHorizontalIntersection(r1TopRight, r1BottomRight, r2TopLeft, r2TopRight)){
+            //intersection is right x top y
+            intersections.add(new Point(r1TopRight.getX(), r2TopLeft.getY()));
         }
-        if (isBetween(other.left, other.right, right)) {
-            if (isBetween(other.top, other.bottom, top)) points.add(new Point(right, other.bottom));
-            if (isBetween(other.top, other.bottom, bottom)) points.add(new Point(right, other.top));
-            if (isBetween(top, bottom, other.top)) points.add(new Point(right, other.top));
-            if (isBetween(top, bottom, other.bottom)) points.add(new Point(right, other.bottom));
+        //right intersects with bottom
+        if (hasVerticalHorizontalIntersection(r1TopRight, r1BottomRight, r2BottomLeft, r2BottomRight)){
+            //intersection is right x bottom y
+            intersections.add(new Point(r1TopRight.getX(), r2BottomLeft.getY()));
         }
-        return points;
+    }
+    //does left intersect with other bottom?
+    //is left x between other x's and other bottom y between  left ys?
+    //yes? intersection is left x other bottom y
+    //does left intersect with other top?
+    //is left x between other top x's & other top y between left y's?
+    //yes? intersection is left x other top y
+    //does right intersect with other top?
+    //is right x between other top x's & other top y between right y's?
+    //yes? intersection is right x other top y
+    //does right intersect with other bottom?
+    //right x between bottom x's && bottom y between right y's
+    //yes? intersection is right x bot y
+
+    private boolean hasVerticalHorizontalIntersection(Point vertP1, Point vertP2, Point horizP1, Point horizP2) {
+        //If vertical x is between the horizontal x's and the horizontal y is between the vertical x's,
+        // there is an intersection
+        return (isBetween(horizP1.getX(), horizP2.getX(), vertP1.getX()) &&
+                isBetween(vertP1.getY(), vertP2.getY(), horizP1.getY()));
     }
 
     //not symmetric
@@ -162,38 +179,8 @@ public class Rectangle {
     }
 
     //TODO endpoint adjacency?
-//    public Optional<Adjacency> getAdjacency(Rectangle other) {
-//        if (other == null) return Optional.empty();
-//        if (this.equals(other)) return Optional.of(new Adjacency(AdjacencyType.PROPER));
-//        List<LineConvexSubset> subs = pGram.getBoundaryPaths().get(0).getElements();
-//        List<LineConvexSubset> otherSubs = other.pGram.getBoundaryPaths().get(0).getElements();
-//        boolean hasPartial = false;
-//        for (LineConvexSubset sub : subs) {
-//            for (LineConvexSubset otherSub : otherSubs) {
-//                //if the two segments are the same it is proper adjacency
-//                if (subsetEquals(sub, otherSub)) return Optional.of(new Adjacency(AdjacencyType.PROPER));
-//                boolean hasStart = otherSub.contains(sub.getStartPoint());
-//                boolean hasEnd = otherSub.contains(sub.getEndPoint());
-//                boolean hasOtherStart = sub.contains(otherSub.getStartPoint());
-//                boolean hasOtherEnd = sub.contains((otherSub.getEndPoint()));
-//                //if one of the segments is entirely within the other is it sub-line adjacency
-//                if ((hasStart && hasEnd) || (hasOtherStart && hasOtherEnd))
-//                    return Optional.of(new Adjacency(AdjacencyType.SUBLINE));
-//                //if one or more of the segments is partially within the other it is partial adjacency TODO
-//                //one on one side and one on other side but not both is partial adjacency
-//                if ((hasStart || hasEnd) && (hasOtherStart || hasOtherEnd))
-//                    hasPartial = true;
-//            }
-//        }
-//        return hasPartial ? Optional.of(new Adjacency(AdjacencyType.PARTIAL)) : Optional.empty();
-//    }
 
-//    private boolean subsetEquals(LineConvexSubset subset1, LineConvexSubset subset2) {
-//        return (subset1.getStartPoint().equals(subset2.getStartPoint()) && subset1.getEndPoint().equals(subset2.getEndPoint()) ||
-//                subset1.getStartPoint().equals(subset2.getEndPoint()) && subset1.getEndPoint().equals(subset2.getStartPoint()));
-//    }
-
-//TODO EQUALS
+    //TODO EQUALS
 
 
     @Override

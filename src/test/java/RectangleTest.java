@@ -27,10 +27,11 @@ public class RectangleTest {
     @Test
     public void testGetPoints() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
-        Point[] expected = {new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1)};
+        List<Point> expected = List.of(new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1));
         Point[] points = rec1.getPoints();
-        for (int i = 0; i < 4; i++){
-            assertEquals(points[i], expected[i]);
+        assertEquals(expected.size(), points.length);
+        for (Point point : points) {
+            assertTrue(expected.contains(point));
         }
     }
 
@@ -210,7 +211,6 @@ public class RectangleTest {
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
         Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 1));
         Set<Point> inter = rec1.getIntersection(rec2);
-        assertFalse(inter.isEmpty());
         assertEquals(2, inter.size());
         Point point1 = new Point(3, 2);
         Point point2 = new Point(5, 2);
@@ -218,7 +218,6 @@ public class RectangleTest {
         assertTrue(inter.contains(point2));
         //testing symmetric call
         Set<Point> symInter = rec2.getIntersection(rec1);
-        assertFalse(symInter.isEmpty());
         assertEquals(2, symInter.size());
         assertTrue(symInter.contains(point1));
         assertTrue(symInter.contains(point2));
@@ -229,11 +228,9 @@ public class RectangleTest {
         Rectangle rec1 = new Rectangle(new Point(1,6), new Point(3,0));
         Rectangle rec2 = new Rectangle(new Point(-4,3), new Point(5, 5));
         Set<Point> inter = rec1.getIntersection(rec2);
-        assertFalse(inter.isEmpty());
         assertEquals(4, inter.size());
         //testing symmetric call
         Set<Point> symInter = rec2.getIntersection(rec1);
-        assertFalse(inter.isEmpty());
         assertEquals(4, inter.size());
         List<Point> points = List.of(new Point(1,3),new Point(3,3),new Point(3,5),new Point(1,5));
         for (Point point : points) {
@@ -244,47 +241,175 @@ public class RectangleTest {
 
     @Test
     public void testIntersectionCorner1(){
-        assertTrue(false);
+        //top left / bottom right
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(1, 5), new Point(3, 3));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(2, 3);
+        Point point2 = new Point(3, 4);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
+
     @Test
     public void testIntersectionCorner2(){
-        assertTrue(false);
-    }
-    @Test
-    public void testIntersectionCorner3(){
-        assertTrue(false);
-    }
-    @Test
-    public void testIntersectionCorner4(){
-        assertTrue(false);
+        //top right / bottom left
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(5, 5), new Point(7, 3));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(6, 3);
+        Point point2 = new Point(5, 4);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
 
     @Test
     public void testIntersectionSide1(){
-        assertTrue(false);
+        //bottom
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 1));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(3, 2);
+        Point point2 = new Point(5, 2);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
     @Test
     public void testIntersectionSide2(){
-        assertTrue(false);
+        //top
+        Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
+        Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 5));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(3, 4);
+        Point point2 = new Point(5, 4);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
+
     @Test
     public void testIntersectionSide3(){
-        assertTrue(false);
+        //left
+        Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(6, 1));
+        Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(1, 2));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(2, 2);
+        Point point2 = new Point(2, 3);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
+
+//    @Test
+//    public void testIntersectionSide4(){
+//        //right
+//        Rectangle rec1 = new Rectangle(new Point(5, 5), new Point(6, 1));
+//        Rectangle rec2 = new Rectangle(new Point(5, 2), new Point(7, 3));
+//        Set<Point> inter = rec1.getIntersection(rec2);
+//        assertFalse(inter.isEmpty());
+//        assertEquals(2, inter.size());
+//        Point point1 = new Point(6, 2);
+//        Point point2 = new Point(6, 3);
+//        assertTrue(inter.contains(point1));
+//        assertTrue(inter.contains(point2));
+//        //testing symmetric call
+//        Set<Point> symInter = rec2.getIntersection(rec1);
+//        assertFalse(symInter.isEmpty());
+//        assertEquals(2, symInter.size());
+//        assertTrue(symInter.contains(point1));
+//        assertTrue(symInter.contains(point2));
+//    }
     @Test
     public void testIntersectionSide4(){
-        assertTrue(false);
+        //right
+        Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(6, 1));
+        Rectangle rec2 = new Rectangle(new Point(5, 2), new Point(7, 4));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(6, 4);
+        Point point2 = new Point(6, 2);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
     }
-//TODO verify need
-//    @Test
-//    public void testIntersectionHorizontal(){
-//        assertTrue(false);
-//    }
-//
-//    @Test
-//    public void testIntersectionVertical(){
-//        assertTrue(false);
-//    }
+
+    @Test
+    public void testIntersectionColinear1(){
+        Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
+        Rectangle rec2 = new Rectangle(new Point(1,5), new Point(3, 4));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(1, inter.size());
+        Point point1 = new Point(2, 4);
+        assertTrue(inter.contains(point1));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(1, symInter.size());
+        assertTrue(symInter.contains(point1));
+    }
+
+    @Test
+    public void testIntersectionColinear2(){
+        Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
+        Rectangle rec2 = new Rectangle(new Point(1,3), new Point(3, 4));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(2, inter.size());
+        Point point1 = new Point(2, 4);
+        Point point2 = new Point(2, 3);
+        assertTrue(inter.contains(point1));
+        assertTrue(inter.contains(point2));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(2, symInter.size());
+        assertTrue(symInter.contains(point1));
+        assertTrue(symInter.contains(point2));
+    }
+
+    @Test
+    public void testIntersectionColinear3(){
+        Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
+        Rectangle rec2 = new Rectangle(new Point(1,1), new Point(3, 2));
+        Set<Point> inter = rec1.getIntersection(rec2);
+        assertEquals(1, inter.size());
+        Point point1 = new Point(2, 2);
+        assertTrue(inter.contains(point1));
+        //testing symmetric call
+        Set<Point> symInter = rec2.getIntersection(rec1);
+        assertEquals(1, symInter.size());
+        assertTrue(symInter.contains(point1));
+    }
+
     @Test
     public void testIntersectionNone() {
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
