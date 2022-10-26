@@ -3,7 +3,8 @@ package org.example;
 import java.util.*;
 
 /**
- * Representation of a Rectangle. This implementation does not support rectangles with rotation. That is to say
+ * Representation of a Rectangle. This implementation does not support rectangles with rotation. That is to say, this
+ * rectangle is composed of horizontal and vertical lines without slope.
  */
 public class Rectangle {
 
@@ -30,10 +31,10 @@ public class Rectangle {
     public Rectangle(Point a, Point b) {
         if (a.x() == b.x() || a.y() == b.y())
             throw new IllegalArgumentException(String.format("Points cannot form a valid rectangle %s %s", a, b));
-        //vertical bounds
+        //vertical boundaries
         leftBound = Math.min(a.x(), b.x());
         rightBound = Math.max(a.x(), b.x());
-        //horizontal bounds
+        //horizontal boundaries
         bottomBound = Math.min(a.y(), b.y());
         topBound = Math.max(a.y(), b.y());
         width = rightBound - leftBound;
@@ -73,16 +74,16 @@ public class Rectangle {
     }
 
     /**
-     *
+     * Determines whether two rectangles have one or more intersecting lines and returns a list of the points of
+     * intersection.
      * This is method is symmetric. For any non-null reference values x and y, x.getIntersection(y) should return the
      * same result set as y.getIntersection(x).
      * @param other Rectangle with potentially intersecting line segments.
-     * @return Set of intersection points.
+     * @return Set of intersection points or an empty Set if the rectangles do not intersect.
      */
     public Set<Point> getIntersection(Rectangle other) {
         Set<Point> intersections = new HashSet<>();
         if (other == null || this.equals(other)) return intersections;
-//        if (this.contains(other) || other.contains(this)) return intersections; TODO test case
         //check if the verticals of this intersect with the horizontals of other
         intersections.addAll(getIntersectionPoints(this, other));
         //check if other's verticals intersect with the horizontals of this
@@ -108,36 +109,40 @@ public class Rectangle {
 
     private Optional<Point> getIntersectionPoint(LineSegment vertical, LineSegment horizontal) {
         if (hasIntersection(vertical, horizontal)) {
+            //the point of intersection will be the vertical x and the horizontal y
             return Optional.of(new Point(vertical.point1().x(), horizontal.point1().y()));
         }
         return Optional.empty();
     }
 
     private boolean hasIntersection(LineSegment vertical, LineSegment horizontal) {
-        //If vertical x is between the horizontal x's and the horizontal y is between the vertical x's,
-        // there is an intersection
+        //There is an intersection if vertical x is between the horizontal x's and
+        // the horizontal y is between the vertical x's
         return (isBetween(horizontal.point1().x(), horizontal.point2().x(), vertical.point1().x()) &&
                 isBetween(vertical.point1().y(), vertical.point2().y(), horizontal.point1().y()));
     }
 
     /**
-     *
-     * This method is not symmetric. x.contains(y) should not return the same result as y.contains(x).
-     * @param other
-     * @return true if this contains other, false otherwise
+     * Determine if this rectangle wholly contains another rectangle.
+     * This method is not symmetric. If x.contains(y) is true then y.contains(x) should be false. However, if
+     * x.contains(y) is false y.contains(x) can also be false.
+     * @param other Rectangle
+     * @return true if this contains other, false otherwise.
      */
     public boolean contains(Rectangle other) {
         if (other == null || this.equals(other)) return false;
-        return (other.leftSeg.point1().x() >= this.leftSeg.point1().x() &&
-                other.rightSeg.point1().x() <= this.rightSeg.point1().x() &&
-                other.bottomSeg.point1().y() >= this.bottomSeg.point1().y() &&
-                other.topSeg.point1().y() <= this.topSeg.point1().y());
+        return (other.leftBound >= leftBound &&
+                other.rightBound <= rightBound &&
+                other.bottomBound >= bottomBound &&
+                other.topBound <= topBound);
     }
 
     /**
+     * Detect whether two rectangles are adjacent. Adjacency is defined as the sharing of at least one side. Side
+     * sharing may be proper, sub-line, or partial.
      * This is method is symmetric. For any non-null reference values x and y, x.isAdjacentTo(y) should return the
      * same result as y.isAdjacentTo(x).
-     * @param other
+     * @param other Rectangle
      * @return true If the rectangles share adjacent sides, false otherwise.
      */
     public boolean isAdjacentTo(Rectangle other) {
@@ -146,25 +151,23 @@ public class Rectangle {
         return hasProperAdjacency(this, other) || hasSubLineAdjacency(this, other) || hasPartialAdjacency(this, other);
     }
 
-//    private boolean isProper(double side1, double side2, double otherSide1, double otherSide2) {
-//        return (side1 == otherSide1 && side2 == otherSide2);
-//    }
-
     private boolean hasProperAdjacency(Rectangle rec1, Rectangle rec2) {
+        //if the two rectangles share right and left boundaries, check if their top & bottom boundaries are the same
         boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
                 (rec1.topBound == rec2.topBound && rec1.bottomBound == rec2.bottomBound);
+        //if the two rectangles share top & bottom boundaries, check if their right & left boundaries are the same
         boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
                 (rec1.leftBound == rec2.leftBound && rec1.rightBound == rec2.rightBound);
         return hasVert || hasHoriz;
     }
 
     private boolean hasSubLineAdjacency(Rectangle rec1, Rectangle rec2) {
-        //rec1 is sub-line of rec2 or rec2 is a sub-line of rec1
-        //TODO currently will return true for proper adjacency
+        //TODO this logic will return true for proper adjacency as well as sub-line
+        //if the two rectangles share right & left boundaries, check if the top & bottom boundaries are within each other
         boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
                 ((rec1.topBound <= rec2.topBound && rec1.bottomBound >= rec2.bottomBound) ||
                         (rec1.topBound >= rec2.topBound && rec1.bottomBound <= rec2.bottomBound));
-
+        //if the two rectangles share top & bottom boundaries, check if their right & left boundaries are within each other
         boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
                 ((rec1.leftBound <= rec2.leftBound && rec1.rightBound >= rec2.rightBound) ||
                         (rec1.leftBound >= rec2.leftBound && rec1.rightBound <= rec2.rightBound));
@@ -172,9 +175,11 @@ public class Rectangle {
     }
 
     private boolean hasPartialAdjacency(Rectangle rec1, Rectangle rec2) {
+        //if the two rectangles share right & left boundaries, check if there is overlap between the top or bottom boundaries exclusively
         boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
                 ((isBetween(rec1.topBound, rec1.bottomBound, rec2.topBound) ^ isBetween(rec1.topBound, rec1.bottomBound, rec2.bottomBound)) ||
                 (isBetween(rec2.topBound, rec2.bottomBound, rec1.topBound) ^ isBetween(rec2.topBound, rec2.bottomBound, rec1.bottomBound)));
+        //if the two rectangles share top & bottom boundaries, check if there is overlap between the right or left boundaries exclusively
         boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
                 ((isBetween(leftBound, rightBound, rec2.leftBound) ^ isBetween(leftBound, rightBound, rec2.rightBound)) ||
                 (isBetween(rec2.leftBound, rec2.rightBound, leftBound) ^ isBetween(rec2.leftBound, rec2.rightBound, rightBound)));
