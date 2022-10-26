@@ -47,7 +47,7 @@ public class Main {
                 .argName("point1 y")
                 .argName("point2 x")
                 .argName("point2 y")
-                .desc("")
+                .desc("First rectangle and the x & y points for the first corner and the x & y points for the opposite corner.")
                 .required()
                 .build();
         options.addOption(r1Input);
@@ -59,26 +59,26 @@ public class Main {
                 .argName("point1 y")
                 .argName("point2 x")
                 .argName("point2 y")
-                .desc("")
+                .desc("Second rectangle and the x & y points for the first corner and the x & y points for the opposite corner.")
                 .required()
                 .build();
         options.addOption(r2Input);
 
         Option iInput = Option.builder("i")
                 .longOpt("intersection")
-                .desc("")
+                .desc("Output the points of intersection of rectangle 1 and rectangle 2.")
                 .build();
         options.addOption(iInput);
 
         Option nInput = Option.builder("c")
                 .longOpt("containment")
-                .desc("")
+                .desc("Output true or false indicating whether rectangle 1 contains rectangle 2.")
                 .build();
         options.addOption(nInput);
 
         Option wInput = Option.builder("a")
                 .longOpt("adjacency")
-                .desc("")
+                .desc("Output true or false indicating whether rectangle 1 and 2 are adjacent.")
                 .build();
         options.addOption(wInput);
         return options;

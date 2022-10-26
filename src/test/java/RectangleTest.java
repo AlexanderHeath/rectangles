@@ -1,9 +1,12 @@
+import org.example.Adjacency;
+import org.example.AdjacencyType;
 import org.example.Point;
 import org.example.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -201,6 +204,60 @@ public class RectangleTest {
     public void testAdjacencyNull() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
         assertFalse(rec1.isAdjacentTo(null));
+    }
+    @Test
+    public void testGetAdjacencyProper() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
+        Rectangle rec2 = new Rectangle(new Point(4, 4), new Point(6, 1));
+        AdjacencyType expected = AdjacencyType.PROPER;
+        Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
+        assertTrue(result1.isPresent());
+        assertEquals(expected, result1.get().type());
+        //testing symmetric call
+        Optional<Adjacency> result2 = rec2.getAdjacency(rec1);
+        assertTrue(result2.isPresent());
+        assertEquals(expected, result2.get().type());
+    }
+
+    @Test
+    public void testGetAdjacencyNone() {
+        Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
+        Rectangle rec2 = new Rectangle(new Point(5, 4), new Point(6, 1));
+        Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
+        assertTrue(result1.isEmpty());
+        //testing symmetric call
+        Optional<Adjacency> result2 = rec2.getAdjacency(rec1);
+        assertTrue(result2.isEmpty());
+    }
+
+    @Test
+    public void testGetAdjacencySubLine() {
+        //top sides same
+        Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
+        Rectangle rec2 = new Rectangle(new Point(4, 5), new Point(6, 2));
+        AdjacencyType expected = AdjacencyType.SUBLINE;
+        Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
+        assertTrue(result1.isPresent());
+        assertEquals(expected, result1.get().type());
+        //testing symmetric call
+        Optional<Adjacency> result2 = rec2.getAdjacency(rec1);
+        assertTrue(result2.isPresent());
+        assertEquals(expected, result2.get().type());
+    }
+
+    @Test
+    public void testGetAdjacencyPartial() {
+        //top sides same
+        Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
+        Rectangle rec2 = new Rectangle(new Point(4, 5), new Point(6, 2));
+        AdjacencyType expected = AdjacencyType.SUBLINE;
+        Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
+        assertTrue(result1.isPresent());
+        assertEquals(expected, result1.get().type());
+        //testing symmetric call
+        Optional<Adjacency> result2 = rec2.getAdjacency(rec1);
+        assertTrue(result2.isPresent());
+        assertEquals(expected, result2.get().type());
     }
 
     @Test

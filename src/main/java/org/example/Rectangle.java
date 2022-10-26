@@ -94,8 +94,8 @@ public class Rectangle {
     /**
      * Returns the intersection points of the vertical segments of rec1 and the horizontal segments of rec2
      *
-     * @param rec1
-     * @param rec2
+     * @param rec1 Rectangle 1
+     * @param rec2 Rectangle 2
      * @return Set of points
      */
     private Set<Point> getIntersectionPoints(Rectangle rec1, Rectangle rec2) {
@@ -151,6 +151,23 @@ public class Rectangle {
         return hasProperAdjacency(this, other) || hasSubLineAdjacency(this, other) || hasPartialAdjacency(this, other);
     }
 
+    /**
+     * Detects and returns the Adjacency shared by the two rectangles. Adjacency is defined as the sharing of at least
+     * one side. Side sharing may be proper, sub-line, or partial.
+     * This is method is symmetric. For any non-null reference values x and y, x.isAdjacentTo(y) should return the
+     * same result as y.isAdjacentTo(x).
+     * @param other Rectangle
+     * @return Optional of Adjacency if the rectangles are adjacent, empty otherwise.
+     */
+    public Optional<Adjacency> getAdjacency(Rectangle other) {
+        if (other == null) return Optional.empty();
+        if (this.equals(other)) return Optional.empty();
+        if (hasProperAdjacency(this, other)) return Optional.of(new Adjacency(AdjacencyType.PROPER));
+        if (hasSubLineAdjacency(this, other)) return Optional.of(new Adjacency(AdjacencyType.SUBLINE));
+        if (hasPartialAdjacency(this, other)) return Optional.of(new Adjacency(AdjacencyType.PARTIAL));
+        return Optional.empty();
+    }
+
     private boolean hasProperAdjacency(Rectangle rec1, Rectangle rec2) {
         //if the two rectangles share right and left boundaries, check if their top & bottom boundaries are the same
         boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
@@ -187,12 +204,12 @@ public class Rectangle {
     }
 
     /**
-     * Checks if c is in between a and b, exclusive
+     * Checks if one number is between two others, exclusive
      *
-     * @param a
-     * @param b
-     * @param c
-     * @return
+     * @param a boundary 1
+     * @param b boundary 2
+     * @param c between candidate
+     * @return tru if c is between a & b
      */
     private boolean isBetween(double a, double b, double c) {
         return (a < c && c < b) || (b < c && c < a);
