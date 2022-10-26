@@ -6,7 +6,8 @@ Project to analyze rectangles and features that exist among rectangles.
 
 The project is built as a jar file and can be executed using the command line interface described below. The only
 project dependency is Apache Commons CLI. The current implementation supports rectangles consisting of horizontal
-and vertical lines. The primary class **Rectangle** is composed of **Point** and **LineSegment** instances.
+and vertical lines. The primary class **Rectangle** is composed of **Point** and **LineSegment** instances. Unit tests
+can be found in **RectangleTest**.
 
 My geometry is rusty so, in the interest of time, I opted to implement the algorithms somewhat naively. I analyzed
 properties of the various relations between rectangles and implemented the algorithms based on
