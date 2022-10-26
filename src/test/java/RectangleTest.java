@@ -248,10 +248,9 @@ public class RectangleTest {
 
     @Test
     public void testGetAdjacencyPartial() {
-        //top sides same
-        Rectangle rec1 = new Rectangle(new Point(1, 5), new Point(4, 1));
-        Rectangle rec2 = new Rectangle(new Point(4, 5), new Point(6, 2));
-        AdjacencyType expected = AdjacencyType.SUBLINE;
+        Rectangle rec1 = new Rectangle(new Point(3, 5), new Point(1, 2));
+        Rectangle rec2 = new Rectangle(new Point(3, 7), new Point(5, 4));
+        AdjacencyType expected = AdjacencyType.PARTIAL;
         Optional<Adjacency> result1 = rec1.getAdjacency(rec2);
         assertTrue(result1.isPresent());
         assertEquals(expected, result1.get().type());
