@@ -51,6 +51,7 @@ public class Rectangle {
 
     /**
      * Get the points representing the four corners of the rectangle.
+     *
      * @return Array of points.
      */
     public Point[] getPoints() {
@@ -59,6 +60,7 @@ public class Rectangle {
 
     /**
      * Get the width of the rectangle.
+     *
      * @return width value
      */
     public double getWidth() {
@@ -67,6 +69,7 @@ public class Rectangle {
 
     /**
      * Get the height of the rectangle.
+     *
      * @return height value
      */
     public double getHeight() {
@@ -78,6 +81,7 @@ public class Rectangle {
      * intersection.
      * This is method is symmetric. For any non-null reference values x and y, x.getIntersection(y) should return the
      * same result set as y.getIntersection(x).
+     *
      * @param other Rectangle with potentially intersecting line segments.
      * @return Set of intersection points or an empty Set if the rectangles do not intersect.
      */
@@ -126,6 +130,7 @@ public class Rectangle {
      * Determine if this rectangle wholly contains another rectangle.
      * This method is not symmetric. If x.contains(y) is true then y.contains(x) should be false. However, if
      * x.contains(y) is false y.contains(x) can also be false.
+     *
      * @param other Rectangle
      * @return true if this contains other, false otherwise.
      */
@@ -142,6 +147,7 @@ public class Rectangle {
      * sharing may be proper, sub-line, or partial.
      * This is method is symmetric. For any non-null reference values x and y, x.isAdjacentTo(y) should return the
      * same result as y.isAdjacentTo(x).
+     *
      * @param other Rectangle
      * @return true If the rectangles share adjacent sides, false otherwise.
      */
@@ -156,6 +162,7 @@ public class Rectangle {
      * one side. Side sharing may be proper, sub-line, or partial.
      * This is method is symmetric. For any non-null reference values x and y, x.isAdjacentTo(y) should return the
      * same result as y.isAdjacentTo(x).
+     *
      * @param other Rectangle
      * @return Optional of Adjacency if the rectangles are adjacent, empty otherwise.
      */
@@ -195,11 +202,11 @@ public class Rectangle {
         //if the two rectangles share right & left boundaries, check if there is overlap between the top or bottom boundaries exclusively
         boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
                 ((isBetween(rec1.topBound, rec1.bottomBound, rec2.topBound) ^ isBetween(rec1.topBound, rec1.bottomBound, rec2.bottomBound)) ||
-                (isBetween(rec2.topBound, rec2.bottomBound, rec1.topBound) ^ isBetween(rec2.topBound, rec2.bottomBound, rec1.bottomBound)));
+                        (isBetween(rec2.topBound, rec2.bottomBound, rec1.topBound) ^ isBetween(rec2.topBound, rec2.bottomBound, rec1.bottomBound)));
         //if the two rectangles share top & bottom boundaries, check if there is overlap between the right or left boundaries exclusively
         boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
                 ((isBetween(leftBound, rightBound, rec2.leftBound) ^ isBetween(leftBound, rightBound, rec2.rightBound)) ||
-                (isBetween(rec2.leftBound, rec2.rightBound, leftBound) ^ isBetween(rec2.leftBound, rec2.rightBound, rightBound)));
+                        (isBetween(rec2.leftBound, rec2.rightBound, leftBound) ^ isBetween(rec2.leftBound, rec2.rightBound, rightBound)));
         return hasVert || hasHoriz;
     }
 

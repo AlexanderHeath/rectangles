@@ -38,6 +38,7 @@ public class Main {
             }
         }
     }
+
     private static Options makeOptions() {
         Options options = new Options();
         Option r1Input = Option.builder("r1")

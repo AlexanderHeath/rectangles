@@ -26,7 +26,7 @@ public class RectangleTest {
     @Test
     public void testGetPoints() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
-        List<Point> expected = List.of(new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1));
+        List<Point> expected = List.of(new Point(1, 4), new Point(4, 4), new Point(4, 1), new Point(1, 1));
         Point[] points = rec1.getPoints();
         assertEquals(expected.size(), points.length);
         for (Point point : points) {
@@ -49,9 +49,9 @@ public class RectangleTest {
     @Test
     public void testImmutable() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
-        List<Point> expected = List.of(new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1));
+        List<Point> expected = List.of(new Point(1, 4), new Point(4, 4), new Point(4, 1), new Point(1, 1));
         Point[] points = rec1.getPoints();
-        points[0] = new Point(1,2);
+        points[0] = new Point(1, 2);
         points = rec1.getPoints();
         for (Point point : points) {
             assertTrue(expected.contains(point));
@@ -205,6 +205,7 @@ public class RectangleTest {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
         assertFalse(rec1.isAdjacentTo(null));
     }
+
     @Test
     public void testGetAdjacencyProper() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
@@ -278,15 +279,15 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionFourWay(){
-        Rectangle rec1 = new Rectangle(new Point(1,6), new Point(3,0));
-        Rectangle rec2 = new Rectangle(new Point(-4,3), new Point(5, 5));
+    public void testIntersectionFourWay() {
+        Rectangle rec1 = new Rectangle(new Point(1, 6), new Point(3, 0));
+        Rectangle rec2 = new Rectangle(new Point(-4, 3), new Point(5, 5));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertEquals(4, inter.size());
         //testing symmetric call
         Set<Point> symInter = rec2.getIntersection(rec1);
         assertEquals(4, inter.size());
-        List<Point> points = List.of(new Point(1,3),new Point(3,3),new Point(3,5),new Point(1,5));
+        List<Point> points = List.of(new Point(1, 3), new Point(3, 3), new Point(3, 5), new Point(1, 5));
         for (Point point : points) {
             assertTrue(inter.contains(point));
             assertTrue(symInter.contains(point));
@@ -294,7 +295,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionCorner1(){
+    public void testIntersectionCorner1() {
         //top left / bottom right
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
         Rectangle rec2 = new Rectangle(new Point(1, 5), new Point(3, 3));
@@ -312,7 +313,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionCorner2(){
+    public void testIntersectionCorner2() {
         //top right / bottom left
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
         Rectangle rec2 = new Rectangle(new Point(5, 5), new Point(7, 3));
@@ -330,7 +331,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionSide1(){
+    public void testIntersectionSide1() {
         //bottom
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
         Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 1));
@@ -348,7 +349,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionSide2(){
+    public void testIntersectionSide2() {
         //top
         Rectangle rec1 = new Rectangle(new Point(2, 4), new Point(6, 2));
         Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(5, 5));
@@ -366,7 +367,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionSide3(){
+    public void testIntersectionSide3() {
         //left
         Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(6, 1));
         Rectangle rec2 = new Rectangle(new Point(3, 3), new Point(1, 2));
@@ -384,7 +385,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionSide4(){
+    public void testIntersectionSide4() {
         //right
         Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(6, 1));
         Rectangle rec2 = new Rectangle(new Point(5, 2), new Point(7, 4));
@@ -402,9 +403,9 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionColinear1(){
+    public void testIntersectionColinear1() {
         Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
-        Rectangle rec2 = new Rectangle(new Point(1,5), new Point(3, 4));
+        Rectangle rec2 = new Rectangle(new Point(1, 5), new Point(3, 4));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertEquals(1, inter.size());
         Point point1 = new Point(2, 4);
@@ -416,9 +417,9 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionColinear2(){
+    public void testIntersectionColinear2() {
         Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
-        Rectangle rec2 = new Rectangle(new Point(1,3), new Point(3, 4));
+        Rectangle rec2 = new Rectangle(new Point(1, 3), new Point(3, 4));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertEquals(2, inter.size());
         Point point1 = new Point(2, 4);
@@ -433,9 +434,9 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersectionColinear3(){
+    public void testIntersectionColinear3() {
         Rectangle rec1 = new Rectangle(new Point(2, 5), new Point(1, 1));
-        Rectangle rec2 = new Rectangle(new Point(1,1), new Point(3, 2));
+        Rectangle rec2 = new Rectangle(new Point(1, 1), new Point(3, 2));
         Set<Point> inter = rec1.getIntersection(rec2);
         assertEquals(1, inter.size());
         Point point1 = new Point(2, 2);
