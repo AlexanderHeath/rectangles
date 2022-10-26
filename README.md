@@ -95,6 +95,8 @@ However, I have not yet included CLI options for these operations.
 
 ### TODOs
 
+- [ ] application logs
+- [ ] CLI hardening (error handling, user input validation, etc)
 - [ ] rectangle coupled with point number type
 - [ ] refactor to include parent class / interface rectangle & existing rectangle moved to a subclass / implementation (
   to allow impl's that support rotation, math based operations, etc)
