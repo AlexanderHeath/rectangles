@@ -50,12 +50,12 @@ public class RectangleTest {
     @Test
     public void testImmutable() {
         Rectangle rec1 = new Rectangle(new Point(1, 4), new Point(4, 1));
-        Point[] expected = {new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1)};
+        List<Point> expected = List.of(new Point(1,4), new Point(4,4), new Point(4,1), new Point(1,1));
         Point[] points = rec1.getPoints();
         points[0] = new Point(1,2);
         points = rec1.getPoints();
-        for (int i = 0; i < 4; i++){
-            assertEquals(points[i], expected[i]);
+        for (Point point : points) {
+            assertTrue(expected.contains(point));
         }
     }
 

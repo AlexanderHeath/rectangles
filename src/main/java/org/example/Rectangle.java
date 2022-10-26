@@ -1,15 +1,16 @@
 package org.example;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * Representation of a Rectangle. This implementation does not support rectangles with rotation. That is to say
+ */
 public class Rectangle {
 
-    private final double left;
-    private final double right;
-    private final double top;
-    private final double bottom;
+    private final double leftBound;
+    private final double rightBound;
+    private final double topBound;
+    private final double bottomBound;
     private final double width;
     private final double height;
 
@@ -17,68 +18,71 @@ public class Rectangle {
     private final LineSegment rightSeg;
     private final LineSegment topSeg;
     private final LineSegment bottomSeg;
-    private final Point[] points;
+
 
     /**
-     * TODO a – first corner point in the rectangle (opposite of b) b – second corner point in the rectangle (opposite of a)
+     * Create a rectangle from two opposite corner points. The constructor will throw an IllegalArgumentException
+     * if a rectangle cannot be created from the points.
      *
-     * @param a
-     * @param b
+     * @param a First corner of the rectangle (opposite of b)
+     * @param b Second corner of the rectangle (opposite of a)
      */
     public Rectangle(Point a, Point b) {
-        if (a.getX() == b.getX() || a.getY() == b.getY())
+        if (a.x() == b.x() || a.y() == b.y())
             throw new IllegalArgumentException(String.format("Points cannot form a valid rectangle %s %s", a, b));
         //vertical bounds
-        left = Math.min(a.getX(), b.getX());
-        right = Math.max(a.getX(), b.getX());
+        leftBound = Math.min(a.x(), b.x());
+        rightBound = Math.max(a.x(), b.x());
         //horizontal bounds
-        bottom = Math.min(a.getY(), b.getY());
-        top = Math.max(a.getY(), b.getY());
-        width = right - left;
-        height = top - bottom;
-        Point topLeft = new Point(left, top);
-        Point bottomLeft = new Point(left, bottom);
-        Point topRight = new Point(right, top);
-        Point bottomRight = new Point(right, bottom);
-
-        points = new Point[]{
-                new Point(left, top),
-                new Point(right, top),
-                new Point(right, bottom),
-                new Point(left, bottom)
-        };
+        bottomBound = Math.min(a.y(), b.y());
+        topBound = Math.max(a.y(), b.y());
+        width = rightBound - leftBound;
+        height = topBound - bottomBound;
+        Point topLeft = new Point(leftBound, topBound);
+        Point bottomLeft = new Point(leftBound, bottomBound);
+        Point topRight = new Point(rightBound, topBound);
+        Point bottomRight = new Point(rightBound, bottomBound);
         leftSeg = new LineSegment(bottomLeft, topLeft);
         rightSeg = new LineSegment(bottomRight, topRight);
         topSeg = new LineSegment(topLeft, topRight);
         bottomSeg = new LineSegment(bottomLeft, bottomRight);
     }
 
+    /**
+     * Get the points representing the four corners of the rectangle.
+     * @return Array of points.
+     */
     public Point[] getPoints() {
-        return points.clone();
+        return new Point[]{leftSeg.point1(), leftSeg.point2(), rightSeg.point1(), rightSeg.point2()};
     }
 
+    /**
+     * Get the width of the rectangle.
+     * @return width value
+     */
     public double getWidth() {
         return width;
     }
 
+    /**
+     * Get the height of the rectangle.
+     * @return height value
+     */
     public double getHeight() {
         return height;
     }
 
     /**
-     * It is reflexive: for any non-null reference value x, x.equals(x) should return true.
-     * It is symmetric: for any non-null reference values x and y, x.equals(y) should return true if and only if y.equals(x) returns true.
-     * It is transitive: for any non-null reference values x, y, and z, if x.equals(y) returns true and y.equals(z) returns true, then x.equals(z) should return true.
-     * It is consistent: for any non-null reference values x and y, multiple invocations of x.equals(y) consistently return true or consistently return false, provided no information used in equals comparisons on the objects is modified.
-     * For any non-null reference value x, x.equals(null) should return false.
      *
-     * @param other
-     * @return
+     * This is method is symmetric. For any non-null reference values x and y, x.getIntersection(y) should return the
+     * same result set as y.getIntersection(x).
+     * @param other Rectangle with potentially intersecting line segments.
+     * @return Set of intersection points.
      */
     public Set<Point> getIntersection(Rectangle other) {
         Set<Point> intersections = new HashSet<>();
         if (other == null || this.equals(other)) return intersections;
-//        if (this.contains(other) || other.contains(this)) return intersections;
+//        if (this.contains(other) || other.contains(this)) return intersections; TODO test case
         //check if the verticals of this intersect with the horizontals of other
         intersections.addAll(getIntersectionPoints(this, other));
         //check if other's verticals intersect with the horizontals of this
@@ -88,9 +92,10 @@ public class Rectangle {
 
     /**
      * Returns the intersection points of the vertical segments of rec1 and the horizontal segments of rec2
+     *
      * @param rec1
      * @param rec2
-     * @return
+     * @return Set of points
      */
     private Set<Point> getIntersectionPoints(Rectangle rec1, Rectangle rec2) {
         Set<Point> intersections = new HashSet<>();
@@ -103,7 +108,7 @@ public class Rectangle {
 
     private Optional<Point> getIntersectionPoint(LineSegment vertical, LineSegment horizontal) {
         if (hasIntersection(vertical, horizontal)) {
-            return Optional.of(new Point(vertical.getPoint1().getX(), horizontal.getPoint1().getY()));
+            return Optional.of(new Point(vertical.point1().x(), horizontal.point1().y()));
         }
         return Optional.empty();
     }
@@ -111,120 +116,73 @@ public class Rectangle {
     private boolean hasIntersection(LineSegment vertical, LineSegment horizontal) {
         //If vertical x is between the horizontal x's and the horizontal y is between the vertical x's,
         // there is an intersection
-        return (isBetween(horizontal.getPoint1().getX(), horizontal.getPoint2().getX(), vertical.getPoint1().getX()) &&
-                isBetween(vertical.getPoint1().getY(), vertical.getPoint2().getY(), horizontal.getPoint1().getY()));
-    }
-
-    //not symmetric
-//    public boolean contains(Rectangle other) {
-//        if (other == null || this.equals(other)) return false;
-//        return (other.left >= this.left && other.right <= this.right &&
-//                other.bottom >= this.bottom && other.top <= this.top);
-//    }
-    public boolean contains(Rectangle other) {
-        if (other == null || this.equals(other)) return false;
-        return (other.leftSeg.getPoint1().getX() >= this.leftSeg.getPoint1().getX() &&
-                other.rightSeg.getPoint1().getX() <= this.rightSeg.getPoint1().getX() &&
-                other.bottomSeg.getPoint1().getY() >= this.bottomSeg.getPoint1().getY() &&
-                other.topSeg.getPoint1().getY() <= this.topSeg.getPoint1().getY());
-    }
-    //TODO less comparisons for isAdj
-//    public boolean isAdjacentTo(Rectangle other) {
-//        if (other == null) return false;
-//        if (this.equals(other)) return false;
-//        if (right == other.left || left == other.right) {
-//            return (isProper(top, bottom, other.top, other.bottom) ||
-//                    isSubLine(top, bottom, other.top, other.bottom) ||
-//                    isPartial(top, bottom, other.top, other.bottom));
-//        }
-//        if (top == other.bottom || bottom == other.top) {
-//            return (isProper(left, right, other.left, other.right) ||
-//                    isSubLine(left, right, other.left, other.right) ||
-//                    isPartial(left, right, other.left, other.right));
-//        }
-//        return false;
-//    }
-
-    public boolean isAdjacentTo(Rectangle other) {
-        if (other == null) return false;
-        if (this.equals(other)) return false;
-
-        //we share a left or right side
-        //either top & bottom y's are same
-        //or either other's top y is between this top & bottom y or other's bottom y is between this top & bottom y
-        //or top y is between other's top & bottom y ||
-
-        //right or left on same vertical line
-        if (shareVertical(this, other)) {
-            if (shareHorizontal(this, other)) return true; //(proper)
-
-            if (topSeg.getPoint1().getY() == other.topSeg.getPoint1().getY() &&
-                    bottomSeg.getPoint1().getY() == other.bottomSeg.getPoint1().getY())
-                return true;
-
-
-
-            if (isProper(bottomSeg.getPoint1().getY(), topSeg.getPoint1().getY(),
-                    other.bottomSeg.getPoint1().getY(), other.topSeg.getPoint1().getY())) {
-                return true;
-            }
-
-        }
-        //left on same vertical line
-        if (leftSeg.getPoint1().getX() == other.rightSeg.getPoint1().getX()) {
-            if (leftSeg == rightSeg) return true;
-            if (isBetween(leftSeg.getPoint1().getY(), leftSeg.getPoint1().getY(), other.topSeg.getPoint1().getY()) ||
-                    isBetween(leftSeg.getPoint1().getY(), leftSeg.getPoint1().getY(), other.bottomSeg.getPoint1().getY())
-            //check if same (proper)
-            //if not
-            //check if either top or bottom y within left y (partial, but will work for sub-line)
-        }
-
-        if (rightSeg.getPoint1().getX() == other.leftSeg.getPoint1().getX() ||
-                leftSeg.getPoint1().getX() == other.rightSeg.getPoint1().getX()) {
-            //on same vertical line
-            //now need to check if there is any horizontal cross over
-            return
-            return (isProper(top, bottom, other.top, other.bottom) ||
-                    isSubLine(top, bottom, other.top, other.bottom) ||
-                    isPartial(top, bottom, other.top, other.bottom));
-        }
-        if (top == other.bottom || bottom == other.top) {
-            return (isProper(left, right, other.left, other.right) ||
-                    isSubLine(left, right, other.left, other.right) ||
-                    isPartial(left, right, other.left, other.right));
-        }
-        return false;
-    }
-
-    private boolean shareVertical(Rectangle rec1, Rectangle rec2) {
-        return rec1.rightSeg.getPoint1().getX() == rec2.leftSeg.getPoint1().getX() ||
-                rec1.leftSeg.getPoint1().getX() == rec2.rightSeg.getPoint1().getX();
-    }
-
-    private boolean shareHorizontal(Rectangle rec1, Rectangle rec2) {
-        return rec1.topSeg.getPoint1().getX() == rec2.bottomSeg.getPoint1().getX() ||
-                rec1.bottomSeg.getPoint1().getX() == rec2.topSeg.getPoint1().getX();
-    }
-
-    private boolean isProper(double side1, double side2, double otherSide1, double otherSide2) {
-        return (side1 == otherSide1 && side2 == otherSide2);
-    }
-
-    private boolean isSubLine(double side1, double side2, double otherSide1, double otherSide2) {
-        //this is sub-line of other or other is a sub-line of this
-        //TODO currently will return true for proper adjacency
-        return (side1 <= otherSide1 && side2 >= otherSide2) ||
-                (side1 >= otherSide1 && side2 <= otherSide2);
-    }
-
-    private boolean isPartial(double side1, double side2, double otherSide1, double otherSide2) {
-        return (isBetween(side1, side2, otherSide1) ^ isBetween(side1, side2, otherSide2)) ||
-                (isBetween(otherSide1, otherSide2, side1) ^ isBetween(otherSide1, otherSide2, side2));
+        return (isBetween(horizontal.point1().x(), horizontal.point2().x(), vertical.point1().x()) &&
+                isBetween(vertical.point1().y(), vertical.point2().y(), horizontal.point1().y()));
     }
 
     /**
-     * Checks if c is in between a and b, exclusively
+     *
+     * This method is not symmetric. x.contains(y) should not return the same result as y.contains(x).
+     * @param other
+     * @return true if this contains other, false otherwise
+     */
+    public boolean contains(Rectangle other) {
+        if (other == null || this.equals(other)) return false;
+        return (other.leftSeg.point1().x() >= this.leftSeg.point1().x() &&
+                other.rightSeg.point1().x() <= this.rightSeg.point1().x() &&
+                other.bottomSeg.point1().y() >= this.bottomSeg.point1().y() &&
+                other.topSeg.point1().y() <= this.topSeg.point1().y());
+    }
+
+    /**
+     * This is method is symmetric. For any non-null reference values x and y, x.isAdjacentTo(y) should return the
+     * same result as y.isAdjacentTo(x).
+     * @param other
+     * @return true If the rectangles share adjacent sides, false otherwise.
+     */
+    public boolean isAdjacentTo(Rectangle other) {
+        if (other == null) return false;
+        if (this.equals(other)) return false;
+        return hasProperAdjacency(this, other) || hasSubLineAdjacency(this, other) || hasPartialAdjacency(this, other);
+    }
+
+//    private boolean isProper(double side1, double side2, double otherSide1, double otherSide2) {
+//        return (side1 == otherSide1 && side2 == otherSide2);
+//    }
+
+    private boolean hasProperAdjacency(Rectangle rec1, Rectangle rec2) {
+        boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
+                (rec1.topBound == rec2.topBound && rec1.bottomBound == rec2.bottomBound);
+        boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
+                (rec1.leftBound == rec2.leftBound && rec1.rightBound == rec2.rightBound);
+        return hasVert || hasHoriz;
+    }
+
+    private boolean hasSubLineAdjacency(Rectangle rec1, Rectangle rec2) {
+        //rec1 is sub-line of rec2 or rec2 is a sub-line of rec1
+        //TODO currently will return true for proper adjacency
+        boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
+                ((rec1.topBound <= rec2.topBound && rec1.bottomBound >= rec2.bottomBound) ||
+                        (rec1.topBound >= rec2.topBound && rec1.bottomBound <= rec2.bottomBound));
+
+        boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
+                ((rec1.leftBound <= rec2.leftBound && rec1.rightBound >= rec2.rightBound) ||
+                        (rec1.leftBound >= rec2.leftBound && rec1.rightBound <= rec2.rightBound));
+        return hasVert || hasHoriz;
+    }
+
+    private boolean hasPartialAdjacency(Rectangle rec1, Rectangle rec2) {
+        boolean hasVert = (rec1.rightBound == rec2.leftBound || rec1.leftBound == rec2.rightBound) &&
+                ((isBetween(rec1.topBound, rec1.bottomBound, rec2.topBound) ^ isBetween(rec1.topBound, rec1.bottomBound, rec2.bottomBound)) ||
+                (isBetween(rec2.topBound, rec2.bottomBound, rec1.topBound) ^ isBetween(rec2.topBound, rec2.bottomBound, rec1.bottomBound)));
+        boolean hasHoriz = (rec1.topBound == rec2.bottomBound || rec1.bottomBound == rec2.topBound) &&
+                ((isBetween(leftBound, rightBound, rec2.leftBound) ^ isBetween(leftBound, rightBound, rec2.rightBound)) ||
+                (isBetween(rec2.leftBound, rec2.rightBound, leftBound) ^ isBetween(rec2.leftBound, rec2.rightBound, rightBound)));
+        return hasVert || hasHoriz;
+    }
+
+    /**
+     * Checks if c is in between a and b, exclusive
      *
      * @param a
      * @param b
@@ -235,13 +193,27 @@ public class Rectangle {
         return (a < c && c < b) || (b < c && c < a);
     }
 
-    //TODO endpoint adjacency?
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rectangle rectangle = (Rectangle) o;
+        return leftSeg.equals(rectangle.leftSeg) && rightSeg.equals(rectangle.rightSeg) &&
+                topSeg.equals(rectangle.topSeg) && bottomSeg.equals(rectangle.bottomSeg);
+    }
 
-    //TODO EQUALS
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(leftSeg, rightSeg, topSeg, bottomSeg);
+    }
 
     @Override
     public String toString() {
-        return "Rectangle{}";
+        StringJoiner stringJoiner = new StringJoiner(",");
+        stringJoiner.add(leftSeg.point1().toString())
+                .add(leftSeg.point2().toString())
+                .add(rightSeg.point1().toString())
+                .add(rightSeg.point2().toString());
+        return stringJoiner.toString();
     }
 }
